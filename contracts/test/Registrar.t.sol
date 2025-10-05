@@ -483,18 +483,8 @@ contract RegistrarTest is Test {
     }
 
     function _generateDigest(uint256 creditId, bytes memory validationProof) internal view returns (bytes32) {
-        bytes32 message = keccak256(
-            abi.encodePacked(registrar.CREDIT_ISSUING_PREFIX(), creditId, validationProof)
-        );
-        return keccak256(
-            abi.encodePacked(
-                bytes1(0x19),
-                bytes1(0x00),
-                address(registrar),
-                block.chainid,
-                message
-            )
-        );
+        bytes32 message = keccak256(abi.encodePacked(registrar.CREDIT_ISSUING_PREFIX(), creditId, validationProof));
+        return keccak256(abi.encodePacked(bytes1(0x19), bytes1(0x00), address(registrar), block.chainid, message));
     }
 }
 

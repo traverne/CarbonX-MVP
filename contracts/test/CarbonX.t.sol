@@ -586,11 +586,10 @@ contract CarbonXTest is Test {
         return _issueCreditWithParams(to, testCert, testSalt);
     }
 
-    function _issueCreditWithParams(
-        address to,
-        Certification memory cert,
-        bytes32 salt
-    ) internal returns (uint256 id) {
+    function _issueCreditWithParams(address to, Certification memory cert, bytes32 salt)
+        internal
+        returns (uint256 id)
+    {
         id = registrar.getCreditId(cert, salt);
         bytes memory validationProof = "ipfs://proof";
         bytes32 digest = _generateDigest(id, validationProof);
@@ -602,18 +601,8 @@ contract CarbonXTest is Test {
     }
 
     function _generateDigest(uint256 creditId, bytes memory validationProof) internal view returns (bytes32) {
-        bytes32 message = keccak256(
-            abi.encodePacked(registrar.CREDIT_ISSUING_PREFIX(), creditId, validationProof)
-        );
-        return keccak256(
-            abi.encodePacked(
-                bytes1(0x19),
-                bytes1(0x00),
-                address(registrar),
-                block.chainid,
-                message
-            )
-        );
+        bytes32 message = keccak256(abi.encodePacked(registrar.CREDIT_ISSUING_PREFIX(), creditId, validationProof));
+        return keccak256(abi.encodePacked(bytes1(0x19), bytes1(0x00), address(registrar), block.chainid, message));
     }
 
     function _startsWith(string memory str, string memory prefix) internal pure returns (bool) {
@@ -639,18 +628,13 @@ contract CarbonXTest is Test {
 /* ============================================ */
 
 contract ERC721Receiver {
-    function onERC721Received(
-        address,
-        address,
-        uint256,
-        bytes calldata
-    ) external pure returns (bytes4) {
+    function onERC721Received(address, address, uint256, bytes calldata) external pure returns (bytes4) {
         return this.onERC721Received.selector;
     }
 }
 
 contract InvalidReceiver {
-    // Does not implement onERC721Received
+// Does not implement onERC721Received
 }
 
 contract ReentrantReceiver {
@@ -661,12 +645,7 @@ contract ReentrantReceiver {
         token = _token;
     }
 
-    function onERC721Received(
-        address,
-        address,
-        uint256 tokenId,
-        bytes calldata
-    ) external returns (bytes4) {
+    function onERC721Received(address, address, uint256 tokenId, bytes calldata) external returns (bytes4) {
         if (!attacked) {
             attacked = true;
             // Try to transfer the token again (should fail due to state changes)

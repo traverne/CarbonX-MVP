@@ -9,11 +9,11 @@ import {ReentrancyGuard} from "solmate/utils/ReentrancyGuard.sol";
 struct Listing {
     address asker;
     address bidder;
-    uint id;
-    uint price;
-    uint expiry;
-    uint createdAt;
-    uint fulfilledAt;
+    uint256 id;
+    uint256 price;
+    uint256 expiry;
+    uint256 createdAt;
+    uint256 fulfilledAt;
 }
 
 /// @title Marketplace: Permissionless CarbonX Carbon Credit Exchange
@@ -21,14 +21,14 @@ struct Listing {
 /// @notice Version:MVP(1)
 contract Marketplace is ReentrancyGuard, ERC721TokenReceiver {
     IERC721 public CarbonX;
-    mapping (uint listingId => Listing listing) public listings;
+    mapping(uint256 listingId => Listing listing) public listings;
 
-    event Listed(uint listingId, uint indexed id);
-    event Fulfilled(uint listingId, uint indexed id, address indexed to);
+    event Listed(uint256 listingId, uint256 indexed id);
+    event Fulfilled(uint256 listingId, uint256 indexed id, address indexed to);
 
-    event Expired(uint listingId, uint indexed id);
-    event ListingUpdated(uint listingId, uint indexed id);
-    event ListingCancelled(uint listingId, uint indexed id);
+    event Expired(uint256 listingId, uint256 indexed id);
+    event ListingUpdated(uint256 listingId, uint256 indexed id);
+    event ListingCancelled(uint256 listingId, uint256 indexed id);
 
     constructor(IERC721 _token) {
         CarbonX = _token;
@@ -37,7 +37,11 @@ contract Marketplace is ReentrancyGuard, ERC721TokenReceiver {
     /* ============================================ */
     /* Core User Functions
     /* ============================================ */
-    function list(uint id, uint price, uint expiry, bytes32 salt) public nonReentrant returns (uint listingId) {
+    function list(uint256 id, uint256 price, uint256 expiry, bytes32 salt)
+        public
+        nonReentrant
+        returns (uint256 listingId)
+    {
         // Lets the contract transfer the token (which is approved to this marketplace)
         // if the user is also approved to use the token
 
@@ -45,9 +49,7 @@ contract Marketplace is ReentrancyGuard, ERC721TokenReceiver {
         address approved = CarbonX.getApproved(id);
 
         require(
-            creditOwner == msg.sender ||
-            approved == msg.sender ||
-            CarbonX.isApprovedForAll(creditOwner, msg.sender),
+            creditOwner == msg.sender || approved == msg.sender || CarbonX.isApprovedForAll(creditOwner, msg.sender),
             "Marketplace: Unauthorized"
         );
 
@@ -68,7 +70,7 @@ contract Marketplace is ReentrancyGuard, ERC721TokenReceiver {
         emit Listed(listingId, id);
     }
 
-    function update(uint listingId, uint newPrice, uint newExpiry) external {
+    function update(uint256 listingId, uint256 newPrice, uint256 newExpiry) external {
         Listing storage listing = listings[listingId];
 
         require(listing.asker == msg.sender, "Marketplace: Unauthorized");
@@ -80,21 +82,21 @@ contract Marketplace is ReentrancyGuard, ERC721TokenReceiver {
         emit ListingUpdated(listingId, listing.id);
     }
 
-    function cancel(uint listingId) external nonReentrant returns (uint id) {
+    function cancel(uint256 listingId) external nonReentrant returns (uint256 id) {
         Listing storage listing = listings[listingId];
         id = listing.id;
 
         require(listing.asker == msg.sender, "Marketplace: Unauthorized");
         require(!isListingFulfilled(listingId), "Marketplace: Listing already fulfilled");
 
-        listing.fulfilledAt = type(uint).max;
+        listing.fulfilledAt = type(uint256).max;
         CarbonX.safeTransferFrom(address(this), listing.asker, id);
 
         if (isListingExpired(id)) emit Expired(listingId, id);
         else emit ListingCancelled(listingId, id);
     }
 
-    function fulfill(uint listingId) external payable nonReentrant returns (uint id) {
+    function fulfill(uint256 listingId) external payable nonReentrant returns (uint256 id) {
         Listing storage listing = listings[listingId];
         id = listing.id;
 
@@ -110,39 +112,43 @@ contract Marketplace is ReentrancyGuard, ERC721TokenReceiver {
     /* ============================================ */
     /* Static User Functions
     /* ============================================ */
-    function getListing(uint listingId) public view returns (Listing memory) {
+    function getListing(uint256 listingId) public view returns (Listing memory) {
         return listings[listingId];
     }
 
-    function isListingActive(uint listingId) public view returns (bool) {
+    function isListingActive(uint256 listingId) public view returns (bool) {
         return isListingValid(listingId) && (!isListingFulfilled(listingId)) && (!isListingExpired(listingId));
     }
 
-    function isListingExpired(uint listingId) public view returns (bool) {
+    function isListingExpired(uint256 listingId) public view returns (bool) {
         return listings[listingId].expiry != 0 && listings[listingId].expiry < block.timestamp;
     }
 
-    function isListingValid(uint listingId) public view returns (bool) {
+    function isListingValid(uint256 listingId) public view returns (bool) {
         return listings[listingId].createdAt > 0;
     }
 
-    function isListingFulfilled(uint listingId) public view returns (bool) {
+    function isListingFulfilled(uint256 listingId) public view returns (bool) {
         return listings[listingId].fulfilledAt > 0;
     }
 
     /// @dev uses block.number for pseudorandomness for additional uniqueness in extreme edge cases
-    function getListingId(uint id, uint price, uint expiry, bytes32 salt, uint blockNumber) public pure returns (uint listingId) {
-        listingId = uint(keccak256(abi.encodePacked(id, price, expiry, salt, blockNumber)));
+    function getListingId(uint256 id, uint256 price, uint256 expiry, bytes32 salt, uint256 blockNumber)
+        public
+        pure
+        returns (uint256 listingId)
+    {
+        listingId = uint256(keccak256(abi.encodePacked(id, price, expiry, salt, blockNumber)));
     }
 
     /* ============================================ */
     /* Internal Functions
     /* ============================================ */
-    function _processPayable(uint p) internal {
+    function _processPayable(uint256 p) internal {
         require(p <= msg.value, "Marketplace: Insufficient price paid");
-        uint s = msg.value - p;
+        uint256 s = msg.value - p;
         if (s > 0) {
-            (bool success, ) = payable(msg.sender).call{value: s}("");
+            (bool success,) = payable(msg.sender).call{value: s}("");
             require(success, "Marketplace: Excess payment refund failed");
         }
     }
