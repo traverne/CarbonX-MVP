@@ -7,6 +7,9 @@ import {Registrar, Certification, Standard} from "../src/Registrar.sol";
 import {CarbonX} from "../src/CarbonX.sol";
 import {IERC721} from "forge-std/interfaces/IERC721.sol";
 
+/// @title MarketplaceTest: Unit Testing for MarketplaceTest Contract
+/// @author Athen Traverne [athen@aetherionresearch.com], et al
+/// @notice Auto-generated using AI Agents
 contract MarketplaceTest is Test {
     Marketplace public marketplace;
     Registrar public registrar;
