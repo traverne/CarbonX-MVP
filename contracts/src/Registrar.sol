@@ -37,6 +37,9 @@ struct CreditMetadata {
     bytes validationProof;
 }
 
+/// @title Registrar: Registrar for CarbonX Carbon Credits
+/// @author Athen Traverne [athen@aetherionresearch.com]
+/// @notice Version:MVP(1)
 contract Registrar is Owned, ReentrancyGuard {
     /* ============================================ */
     /* ERC-191 Signature Structure
@@ -189,7 +192,7 @@ contract Registrar is Owned, ReentrancyGuard {
     }
 
     function _validateDigest(bytes32 digest, bytes memory signature) internal returns (address validator) {
-        require(signature.length == 65, "CarbonCreditRegistrar: Invalid proof");
+        require(signature.length == 65, "CarbonCreditRegistrar: Invalid signature");
         require(!consumed[digest], "CarbonCreditRegistrar: Signature already used");
 
         bytes32 r;

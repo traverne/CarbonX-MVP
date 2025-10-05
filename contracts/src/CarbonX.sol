@@ -12,7 +12,7 @@ contract CarbonX is ERC721 {
     string public prefix;
     address public immutable registrar;
 
-    constructor(string memory _prefix, address _registrar) ERC721("Carbon Credit (CarbonX)", "CO2e") {
+    constructor(string memory _prefix, address _registrar) ERC721("[CarbonX] Carbon Credit", "CO2e") {
         require(_registrar != address(0x00), "Carbon Credit: Invalid address");
 
         registrar = _registrar;
