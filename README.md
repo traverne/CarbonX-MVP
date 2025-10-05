@@ -113,7 +113,7 @@ Decentralized exchange with escrow mechanism.
 
 ```bash
 # Clone repository
-git clone https://github.com/yourusername/carbonx.git
+git clone https://github.com/traverne/CarbonX-MVP.git
 cd carbonx
 
 # Install Foundry dependencies
@@ -216,4 +216,4 @@ MIT License - see [LICENSE](LICENSE) file for details
 
 - **Website**: [carbonx-vechain.vercel.app]
 
-**Built on VeChainThor for a sustainable future** 
+**Built on VeChainThor for a sustainable future**
