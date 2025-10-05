@@ -15,6 +15,7 @@ enum Standard {
     Other
 }
 
+/// @dev structure is optimized for efficient packing
 struct Certification {
     string project_name;
     string issuer_name;
@@ -26,6 +27,7 @@ struct Certification {
     Standard standard;
 }
 
+/// @dev structure is optimized for efficient packing
 struct CreditMetadata {
     Certification certification;
     bytes32 salt;
@@ -92,7 +94,7 @@ contract Registrar is Owned, ReentrancyGuard {
     }
 
     /* ============================================ */
-    /* Non-static User Functions
+    /* Core User Functions
     /* ============================================ */
     /// @dev param:salt To support if there exists another credit with the exactly same certification
     function issue(
