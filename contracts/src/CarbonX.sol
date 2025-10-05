@@ -5,6 +5,9 @@ import {ERC721} from "solmate/tokens/ERC721.sol";
 import {LibString} from "solmate/utils/LibString.sol";
 import {Base64} from "base64/base64.sol";
 
+/// @title CarbonX: On-chain ERC721 Representation of Certified Carbon Credits
+/// @author Athen Traverne [athen@aetherionresearch.com]
+/// @notice Version:MVP(1)
 contract CarbonX is ERC721 {
     using LibString for uint256;
     using Base64 for bytes;
