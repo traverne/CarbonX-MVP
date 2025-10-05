@@ -5,6 +5,8 @@ import {ERC721} from "solmate/tokens/ERC721.sol";
 import {LibString} from "solmate/utils/LibString.sol";
 import {Base64} from "base64/base64.sol";
 
+import {Registrar} from "./Registrar.sol";
+
 /// @title CarbonX: On-chain ERC721 Representation of Certified Carbon Credits
 /// @author Athen Traverne [athen@aetherionresearch.com]
 /// @notice Version:MVP(1)
@@ -41,6 +43,8 @@ contract CarbonX is ERC721 {
 
     /// @dev use staticcall for gas efficiency (direct bytes returndata)
     function tokenURI(uint256 id) public view override returns (string memory) {
+        require(Registrar(registrar).isCreditIssued(id), "Carbon Credit: Invalid id");
+
         (bool success, bytes memory metadata) =
             registrar.staticcall(abi.encodeWithSignature("getMetadata(uint256)", id));
 
