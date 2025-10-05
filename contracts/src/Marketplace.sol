@@ -92,7 +92,7 @@ contract Marketplace is ReentrancyGuard, ERC721TokenReceiver {
         listing.fulfilledAt = type(uint256).max;
         CarbonX.safeTransferFrom(address(this), listing.asker, id);
 
-        if (isListingExpired(id)) emit Expired(listingId, id);
+        if (isListingExpired(listingId)) emit Expired(listingId, id);
         else emit ListingCancelled(listingId, id);
     }
 
