@@ -30,11 +30,11 @@ contract MarketplaceTest is Test {
     uint256 public constant LISTING_PRICE = 1 ether;
     uint256 public constant EXPIRY_TIME = 7 days;
 
-    event Listed(uint listingId, uint indexed id);
-    event Fulfilled(uint listingId, uint indexed id, address indexed to);
-    event Expired(uint listingId, uint indexed id);
-    event ListingUpdated(uint listingId, uint indexed id);
-    event ListingCancelled(uint listingId, uint indexed id);
+    event Listed(uint256 listingId, uint256 indexed id);
+    event Fulfilled(uint256 listingId, uint256 indexed id, address indexed to);
+    event Expired(uint256 listingId, uint256 indexed id);
+    event ListingUpdated(uint256 listingId, uint256 indexed id);
+    event ListingCancelled(uint256 listingId, uint256 indexed id);
 
     function setUp() public {
         owner = makeAddr("owner");
@@ -94,13 +94,7 @@ contract MarketplaceTest is Test {
         token.approve(address(marketplace), creditId);
 
         uint256 expiry = block.timestamp + EXPIRY_TIME;
-        uint256 expectedListingId = marketplace.getListingId(
-            creditId,
-            LISTING_PRICE,
-            expiry,
-            listingSalt,
-            block.number
-        );
+        uint256 expectedListingId = marketplace.getListingId(creditId, LISTING_PRICE, expiry, listingSalt, block.number);
 
         vm.expectEmit(true, true, false, false);
         emit Listed(expectedListingId, creditId);
@@ -185,8 +179,10 @@ contract MarketplaceTest is Test {
         token.approve(address(marketplace), creditId1);
         token.approve(address(marketplace), creditId2);
 
-        uint256 listingId1 = marketplace.list(creditId1, LISTING_PRICE, block.timestamp + EXPIRY_TIME, keccak256("list1"));
-        uint256 listingId2 = marketplace.list(creditId2, LISTING_PRICE * 2, block.timestamp + EXPIRY_TIME, keccak256("list2"));
+        uint256 listingId1 =
+            marketplace.list(creditId1, LISTING_PRICE, block.timestamp + EXPIRY_TIME, keccak256("list1"));
+        uint256 listingId2 =
+            marketplace.list(creditId2, LISTING_PRICE * 2, block.timestamp + EXPIRY_TIME, keccak256("list2"));
         vm.stopPrank();
 
         assertTrue(listingId1 != listingId2);
@@ -489,7 +485,8 @@ contract MarketplaceTest is Test {
 
     function test_IsListingValid() public {
         uint256 creditId = _issueCredit(seller);
-        uint256 listingId = marketplace.getListingId(creditId, LISTING_PRICE, block.timestamp + EXPIRY_TIME, listingSalt, block.number);
+        uint256 listingId =
+            marketplace.getListingId(creditId, LISTING_PRICE, block.timestamp + EXPIRY_TIME, listingSalt, block.number);
 
         assertFalse(marketplace.isListingValid(listingId));
 
@@ -506,13 +503,16 @@ contract MarketplaceTest is Test {
     /* ============================================ */
 
     function test_GetListingId() public view {
-        uint256 listingId = marketplace.getListingId(1, LISTING_PRICE, block.timestamp + EXPIRY_TIME, listingSalt, block.number);
+        uint256 listingId =
+            marketplace.getListingId(1, LISTING_PRICE, block.timestamp + EXPIRY_TIME, listingSalt, block.number);
         assertTrue(listingId > 0);
     }
 
     function test_GetListingId_DifferentParameters() public view {
-        uint256 id1 = marketplace.getListingId(1, LISTING_PRICE, block.timestamp + EXPIRY_TIME, listingSalt, block.number);
-        uint256 id2 = marketplace.getListingId(2, LISTING_PRICE, block.timestamp + EXPIRY_TIME, listingSalt, block.number);
+        uint256 id1 =
+            marketplace.getListingId(1, LISTING_PRICE, block.timestamp + EXPIRY_TIME, listingSalt, block.number);
+        uint256 id2 =
+            marketplace.getListingId(2, LISTING_PRICE, block.timestamp + EXPIRY_TIME, listingSalt, block.number);
         uint256 id3 = marketplace.getListingId(1, 2 ether, block.timestamp + EXPIRY_TIME, listingSalt, block.number);
         uint256 id4 = marketplace.getListingId(1, LISTING_PRICE, block.timestamp + 14 days, listingSalt, block.number);
 
@@ -522,11 +522,13 @@ contract MarketplaceTest is Test {
     }
 
     function test_GetListingId_DifferentBlocks() public {
-        uint256 id1 = marketplace.getListingId(1, LISTING_PRICE, block.timestamp + EXPIRY_TIME, listingSalt, block.number);
+        uint256 id1 =
+            marketplace.getListingId(1, LISTING_PRICE, block.timestamp + EXPIRY_TIME, listingSalt, block.number);
 
         vm.roll(block.number + 1);
 
-        uint256 id2 = marketplace.getListingId(1, LISTING_PRICE, block.timestamp + EXPIRY_TIME, listingSalt, block.number);
+        uint256 id2 =
+            marketplace.getListingId(1, LISTING_PRICE, block.timestamp + EXPIRY_TIME, listingSalt, block.number);
 
         assertTrue(id1 != id2);
     }
@@ -803,7 +805,10 @@ contract MarketplaceTest is Test {
         }
     }
 
-    function testFuzz_ListingId(uint256 id, uint256 price, uint256 expiry, bytes32 salt, uint256 blockNum) public view {
+    function testFuzz_ListingId(uint256 id, uint256 price, uint256 expiry, bytes32 salt, uint256 blockNum)
+        public
+        view
+    {
         uint256 listingId = marketplace.getListingId(id, price, expiry, salt, blockNum);
         assertTrue(listingId > 0);
     }
@@ -954,12 +959,10 @@ contract MarketplaceTest is Test {
         registrar.issue(testCert, to, salt, validationProof, signature);
     }
 
-    function _createListing(
-        address lister,
-        uint256 creditId,
-        uint256 price,
-        uint256 expiry
-    ) internal returns (uint256 listingId) {
+    function _createListing(address lister, uint256 creditId, uint256 price, uint256 expiry)
+        internal
+        returns (uint256 listingId)
+    {
         vm.startPrank(lister);
         token.approve(address(marketplace), creditId);
         listingId = marketplace.list(creditId, price, expiry, listingSalt);
@@ -967,18 +970,8 @@ contract MarketplaceTest is Test {
     }
 
     function _generateDigest(uint256 creditId, bytes memory validationProof) internal view returns (bytes32) {
-        bytes32 message = keccak256(
-            abi.encodePacked(registrar.CREDIT_ISSUING_PREFIX(), creditId, validationProof)
-        );
-        return keccak256(
-            abi.encodePacked(
-                bytes1(0x19),
-                bytes1(0x00),
-                address(registrar),
-                block.chainid,
-                message
-            )
-        );
+        bytes32 message = keccak256(abi.encodePacked(registrar.CREDIT_ISSUING_PREFIX(), creditId, validationProof));
+        return keccak256(abi.encodePacked(bytes1(0x19), bytes1(0x00), address(registrar), block.chainid, message));
     }
 }
 
@@ -999,12 +992,7 @@ contract MaliciousBuyer {
     }
 
     // Try to reenter on token receive
-    function onERC721Received(
-        address,
-        address,
-        uint256,
-        bytes calldata
-    ) external returns (bytes4) {
+    function onERC721Received(address, address, uint256, bytes calldata) external returns (bytes4) {
         // Reentrancy guard should prevent any issues here
         return this.onERC721Received.selector;
     }

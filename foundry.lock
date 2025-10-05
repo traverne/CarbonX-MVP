@@ -1,0 +1,17 @@
+{
+  "lib/base64": {
+    "tag": {
+      "name": "v1.1.0",
+      "rev": "dcbf852ba545b3d15de0ac0ef88dce934c090c8e"
+    }
+  },
+  "lib/forge-std": {
+    "tag": {
+      "name": "v1.10.0",
+      "rev": "8bbcf6e3f8f62f419e5429a0bd89331c85c37824"
+    }
+  },
+  "lib/solmate": {
+    "rev": "89365b880c4f3c786bdd453d4b8e8fe410344a69"
+  }
+}
