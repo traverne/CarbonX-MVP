@@ -214,6 +214,6 @@ MIT License - see [LICENSE](LICENSE) file for details
 
 ## Contact
 
-- **Website**: [carbonx-vechain.vercel.app]
+- **Website**: [carbonx-frontend.vercel.app]
 
 **Built on VeChainThor for a sustainable future**
