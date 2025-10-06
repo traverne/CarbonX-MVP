@@ -114,7 +114,7 @@ Decentralized exchange with escrow mechanism.
 ```bash
 # Clone repository
 git clone https://github.com/traverne/CarbonX-MVP.git
-cd carbonx
+cd CarbonX-MVP
 
 # Install Foundry dependencies
 cd contracts
@@ -144,7 +144,7 @@ See detailed coverage report: [`.coverage`](./.coverage)
 
 ### Gas Snapshot
 
-See gas consumption metrics: [`.snapshot`](./.snapshot)
+See gas consumption metrics: [`.snapshot`](./.gas-snapshot)
 
 **Optimized for:**
 - Efficient struct packing
